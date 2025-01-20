@@ -34,8 +34,6 @@ normalize_text = True
 verbose = True
 output_chunks = False
 
-setup_environment()
-
 def cry_and_quit():
     print("> Lỗi rồi huhu 😭😭, bạn hãy nhấn chạy lại phần này nhé!")
     quit()
@@ -261,6 +259,8 @@ iface = gr.Interface(
 )
 
 if __name__ == "__main__":
+    setup_environment()
+    
     print("> Đang nạp mô hình...")
 
     try:
