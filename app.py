@@ -34,9 +34,9 @@ normalize_text = True
 verbose = True
 output_chunks = False
 
-def cry_and_quit():
-    print("> Lỗi rồi huhu 😭😭, bạn hãy nhấn chạy lại phần này nhé!")
-    quit()
+def cry_and_quit(e):
+    print("> Lỗi rồi huhu 😭😭")
+    print(e)
 
 import string
 import unicodedata
@@ -53,8 +53,8 @@ try:
     from vinorm import TTSnorm
     from TTS.tts.configs.xtts_config import XttsConfig
     from TTS.tts.models.xtts import Xtts
-except:
-    cry_and_quit()
+except Exception as e:
+    cry_and_quit(e)
 
 # Load model
 def clear_gpu_cache():
@@ -159,8 +159,8 @@ def run_tts(XTTS_MODEL, lang, tts_text, speaker_audio_file,
         # Bug on google colab
         try:
             tts_text = normalize_vietnamese_text(tts_text)
-        except:
-            cry_and_quit()
+        except Exception as e:
+            cry_and_quit(e)
 
     if lang in ["ja", "zh-cn"]:
         tts_texts = tts_text.split("。")
@@ -243,35 +243,21 @@ def tts_interface(input_text, reference_audio, normalize_text, verbose, output_c
                              output_chunks=output_chunks)
         return audio_file
 
-# Gradio interface
-iface = gr.Interface(
-    fn=tts_interface,
-    inputs=[
-        gr.inputs.Textbox(lines=5, label="Văn bản để đọc"),
-        gr.inputs.Textbox(default="model/user_sample.wav", label="Đường dẫn đến file âm thanh mẫu"),
-        gr.inputs.Checkbox(default=True, label="Tự động chuẩn hóa chữ"),
-        gr.inputs.Checkbox(default=True, label="In chi tiết xử lý"),
-        gr.inputs.Checkbox(default=False, label="Lưu từng câu thành file riêng lẻ")
-    ],
-    outputs=gr.outputs.Audio(label="Kết quả âm thanh"),
-    title="Text-to-Speech Demo",
-    description="Nhập văn bản và nhấn nút để chuyển đổi thành âm thanh."
-)
 
 if __name__ == "__main__":
     setup_environment()
     
     print("> Đang nạp mô hình...")
+    vixtts_model = None
 
     try:
         if not vixtts_model:
             vixtts_model = load_model(xtts_checkpoint="model/model.pth",
                                       xtts_config="model/config.json",
                                       xtts_vocab="model/vocab.json")
+            run_tts(vixtts_model, lang="vi", tts_text="Tôi đã có giọng nói. Tôi sẽ không im lặng nữa", speaker_audio_file="samples/nam-cham.wav")
     except:
         vixtts_model = load_model(xtts_checkpoint="model/model.pth",
                                    xtts_config="model/config.json",
                                    xtts_vocab="model/vocab.json")
 
-    print("> Đã nạp mô hình")
-    iface.launch()
