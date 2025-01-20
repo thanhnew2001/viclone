@@ -1,5 +1,6 @@
 import os
 import subprocess
+import gradio as gr
 
 def setup_environment():
     os.system("rm /etc/localtime")
@@ -229,29 +230,46 @@ language_code_map = {
     "Tiếng Hindi": "hi"
 }
 
-print("> Đang nạp mô hình...")
+def tts_interface(input_text, reference_audio, normalize_text, verbose, output_chunks):
+    if not os.path.exists(reference_audio):
+        return "Bạn chưa tải file âm thanh lên. Hãy chọn giọng khác, hoặc tải file của bạn lên ở bên dưới.⚠️⚠️⚠️"
+    else:
+        audio_file = run_tts(vixtts_model,
+                             lang=language_code_map[language],
+                             tts_text=input_text,
+                             speaker_audio_file=reference_audio,
+                             normalize_text=normalize_text,
+                             verbose=verbose,
+                             output_chunks=output_chunks)
+        return audio_file
 
-try:
-    if not vixtts_model:
+# Gradio interface
+iface = gr.Interface(
+    fn=tts_interface,
+    inputs=[
+        gr.inputs.Textbox(lines=5, label="Văn bản để đọc"),
+        gr.inputs.Textbox(default="model/user_sample.wav", label="Đường dẫn đến file âm thanh mẫu"),
+        gr.inputs.Checkbox(default=True, label="Tự động chuẩn hóa chữ"),
+        gr.inputs.Checkbox(default=True, label="In chi tiết xử lý"),
+        gr.inputs.Checkbox(default=False, label="Lưu từng câu thành file riêng lẻ")
+    ],
+    outputs=gr.outputs.Audio(label="Kết quả âm thanh"),
+    title="Text-to-Speech Demo",
+    description="Nhập văn bản và nhấn nút để chuyển đổi thành âm thanh."
+)
+
+if __name__ == "__main__":
+    print("> Đang nạp mô hình...")
+
+    try:
+        if not vixtts_model:
+            vixtts_model = load_model(xtts_checkpoint="model/model.pth",
+                                      xtts_config="model/config.json",
+                                      xtts_vocab="model/vocab.json")
+    except:
         vixtts_model = load_model(xtts_checkpoint="model/model.pth",
-                                  xtts_config="model/config.json",
-                                  xtts_vocab="model/vocab.json")
-except:
-    vixtts_model = load_model(xtts_checkpoint="model/model.pth",
-                               xtts_config="model/config.json",
-                               xtts_vocab="model/vocab.json")
+                                   xtts_config="model/config.json",
+                                   xtts_vocab="model/vocab.json")
 
-print("> Đã nạp mô hình")
-
-if not os.path.exists(reference_audio):
-    print("Bạn chưa tải file âm thanh lên. Hãy chọn giọng khác, hoặc tải file của bạn lên ở bên dưới.⚠️⚠️⚠️")
-    audio_file = "model/vi_sample.wav"
-else:
-    audio_file = run_tts(vixtts_model,
-                         lang=language_code_map[language],
-                         tts_text=input_text,
-                         speaker_audio_file=reference_audio,
-                         normalize_text=normalize_text,
-                         verbose=verbose,
-                         output_chunks=output_chunks)
-                         
+    print("> Đã nạp mô hình")
+    iface.launch()
