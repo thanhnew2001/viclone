@@ -67,7 +67,7 @@
         <form id="ttsForm" onsubmit="handleFormSubmit(event)" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="input_text" class="form-label">Text to Speak:</label>
-                <textarea name="input_text" rows="4" class="form-control" required></textarea>
+                <textarea name="input_text" rows="4" class="form-control" required>Trường trí tuệ nhân tạo Sydney là nơi cung cấp chương trình đào tạo chuyên sâu về AI</textarea>
             </div>
 
             <div class="mb-3">
@@ -94,20 +94,29 @@
                 </select>
             </div>
 
-             <!-- Display sample audio files for testing -->
-        <h2 class="mt-4">Sample Audio Files:</h2>
-        <div class="list-group">
-            {% for sample in samples %}
-            <div class="list-group-item">
-                <p>{{ sample }}</p>
-                <audio controls>
-                    <source src="{{ url_for('static', filename='samples/' ~ sample) }}" type="audio/wav">
-                    Your browser does not support the audio element.
-                </audio>
+            <!-- Display sample audio files for testing -->
+            <h2 class="mt-4">Sample Audio Files:</h2>
+
+            <!-- Button to toggle sample audio list -->
+            <button class="btn btn-secondary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#sampleAudioList" aria-expanded="false" aria-controls="sampleAudioList">
+                Listen to Sample Audio
+            </button>
+
+            <!-- Collapsible sample audio list -->
+            <div class="collapse" id="sampleAudioList">
+                <div class="list-group">
+                    {% for sample in samples %}
+                    <div class="list-group-item">
+                        <p>{{ sample }}</p>
+                        <audio controls>
+                            <source src="{{ url_for('static', filename='samples/' ~ sample) }}" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-            {% endfor %}
-        </div>
-        
+
             <div class="mb-3">
                 <label for="sample_audio" class="form-label">Select Sample Audio:</label>
                 <select name="sample_audio" class="form-select" onchange="handleSampleSelection(event)">
