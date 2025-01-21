@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS Form</title>
+    <script>
+        // Handle the form submission asynchronously
+        function handleFormSubmit(event) {
+            event.preventDefault();  // Prevent the form from submitting normally
+
+            const formData = new FormData(event.target);
+            const form = document.getElementById("ttsForm");
+            
+            fetch('/process', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.audio_file) {
+                    // Update the page with the audio file link
+                    const audioPlayer = document.getElementById('audioPlayer');
+                    audioPlayer.src = data.audio_file;
+                    audioPlayer.style.display = 'block';  // Show the audio player
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Something went wrong!');
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Text-to-Speech with Custom Audio Reference</h1>
+
+    <form id="ttsForm" onsubmit="handleFormSubmit(event)" enctype="multipart/form-data">
+        <label for="input_text">Text to Speak:</label><br>
+        <textarea name="input_text" rows="4" cols="50" required></textarea><br><br>
+
+        <label for="language">Select Language:</label><br>
+        <select name="language" required>
+            <option value="Tiếng Việt">Tiếng Việt</option>
+            <option value="Tiếng Anh">Tiếng Anh</option>
+            <!-- Add other language options here -->
+        </select><br><br>
+
+        <label for="audio_file">Upload Reference Audio (WAV):</label><br>
+        <input type="file" name="audio_file" accept="audio/wav" required><br><br>
+
+        <label for="normalize_text">Normalize Text:</label>
+        <input type="checkbox" name="normalize_text"><br><br>
+
+        <input type="submit" value="Generate Speech">
+    </form>
+
+    <!-- Audio player will be shown once the file is generated -->
+    <h2>Generated Speech:</h2>
+    <audio id="audioPlayer" controls style="display: none;">
+        Your browser does not support the audio element.
+    </audio>
+</body>
+</html>
