@@ -22,8 +22,10 @@ app = Flask(__name__)
 # Directories for uploads and output
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'output'
+SAMPLES_FOLDER = 'static/samples'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
+app.config['SAMPLES_FOLDER'] = SAMPLES_FOLDER
 
 # Allowed file extensions for audio
 ALLOWED_EXTENSIONS = {'wav'}
@@ -69,6 +71,26 @@ def normalize_vietnamese_text(text):
     )
     return text
 
+language_code_map = {
+    "Tiếng Việt": "vi",
+    "Tiếng Anh": "en",
+    "Tiếng Tây Ban Nha": "es",
+    "Tiếng Pháp": "fr",
+    "Tiếng Đức": "de",
+    "Tiếng Ý": "it",
+    "Tiếng Bồ Đào Nha": "pt",
+    "Tiếng Ba Lan": "pl",
+    "Tiếng Thổ Nhĩ Kỳ": "tr",
+    "Tiếng Nga": "ru",
+    "Tiếng Hà Lan": "nl",
+    "Tiếng Séc": "cs",
+    "Tiếng Ả Rập": "ar",
+    "Tiếng Trung (giản thể)": "zh-cn",
+    "Tiếng Nhật": "ja",
+    "Tiếng Hungary": "hu",
+    "Tiếng Hàn": "ko",
+    "Tiếng Hindi": "hi"
+}
 # Generate a safe filename based on input text
 def get_file_name(text, max_char=50):
     filename = text[:max_char]
@@ -188,7 +210,8 @@ def run_tts(XTTS_MODEL, lang, tts_text, speaker_audio_file,
 # Flask routes
 @app.route('/')
 def index():
-    return render_template('index.html')
+    samples = os.listdir(app.config['SAMPLES_FOLDER'])
+    return render_template('index.html', samples=samples)
 
 @app.route('/process', methods=['POST'])
 def process():
@@ -198,28 +221,33 @@ def process():
     language = request.form['language']
     normalize_text = 'normalize_text' in request.form
 
-    # Handle file upload
-    if 'audio_file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-    file = request.files['audio_file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
+    # Handle sample selection
+    sample_audio = request.form.get('sample_audio')
+    if sample_audio:
+        file_path = os.path.join(app.config['SAMPLES_FOLDER'], sample_audio)
+    else:
+        # Handle file upload
+        if 'audio_file' not in request.files:
+            return jsonify({'error': 'No file part'}), 400
+        file = request.files['audio_file']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+        else:
+            return jsonify({'error': 'Invalid file'}), 400
 
-        if vixtts_model is None:
-            # If model is not loaded, load it here
-            vixtts_model = load_model('model/model.pth', 'model/config.json', 'model/vocab.json')
+    if vixtts_model is None:
+        # If model is not loaded, load it here
+        vixtts_model = load_model('model/model.pth', 'model/config.json', 'model/vocab.json')
 
-        # Run TTS
-        audio_file = run_tts(vixtts_model, "vi", input_text, file_path, normalize_text)
+    # Run TTS
+    audio_file = run_tts(vixtts_model,  language_code_map[language], input_text, file_path, normalize_text)
 
-        # Return the URL for the generated audio file
-        return jsonify({'audio_file': f'/download/{os.path.basename(audio_file)}'})
-
-    return jsonify({'error': 'Invalid file'}), 400
+    # Return the URL for the generated audio file
+    return jsonify({'audio_file': f'/download/{os.path.basename(audio_file)}'})
 
 @app.route('/download/<filename>')
 def download_file(filename):
