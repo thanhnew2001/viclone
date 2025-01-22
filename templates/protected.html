@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViClone - Clone everyone's voice</title>
+    <!-- Add Bootstrap for styling and spinner -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        // Handle the form submission asynchronously
+        function handleFormSubmit(event) {
+            event.preventDefault();  // Prevent the form from submitting normally
+
+            const formData = new FormData(event.target);
+            const form = document.getElementById("ttsForm");
+            const submitButton = document.getElementById('submitButton');
+            const spinner = document.getElementById('spinner');
+            const audioPlayer = document.getElementById('audioPlayer');
+            
+            // Disable the button and show the spinner
+            submitButton.disabled = true;
+            spinner.style.display = 'inline-block';
+            audioPlayer.style.display = 'none';  // Hide the audio player initially
+
+            // Send form data to the server
+            fetch('/process', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.audio_file) {
+                    // Update the page with the audio file link
+                    audioPlayer.src = data.audio_file;
+                    audioPlayer.style.display = 'block';  // Show the audio player
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Something went wrong!');
+            })
+            .finally(() => {
+                // Re-enable the button and hide the spinner
+                submitButton.disabled = false;
+                spinner.style.display = 'none';
+            });
+        }
+
+        // Handle sample selection
+        function handleSampleSelection(event) {
+            const fileInput = document.getElementById('audio_file');
+            if (event.target.value === 'own_voice') {
+                fileInput.style.display = 'block';
+            } else {
+                fileInput.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Text-to-Speech with Cloning Everyone's voices</h1>
+
+        <!-- Form to submit the TTS request -->
+        <form id="ttsForm" onsubmit="handleFormSubmit(event)" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="input_text" class="form-label">Text to Speak:</label>
+                <textarea id="input_text" name="input_text" rows="4" class="form-control" required oninput="updateTextLength()">Trường trí tuệ nhân tạo Sydney là nơi cung cấp chương trình đào tạo chuyên sâu về AI</textarea>
+                <small id="textLengthCounter" class="form-text text-muted">0/1000</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="language" class="form-label">Select Language:</label>
+                <select name="language" class="form-select" required>
+                    <option value="Tiếng Việt">Tiếng Việt</option>
+                    <option value="Tiếng Anh">Tiếng Anh</option>
+                    <option value="Tiếng Tây Ban Nha">Tiếng Tây Ban Nha</option>
+                    <option value="Tiếng Pháp">Tiếng Pháp</option>
+                    <option value="Tiếng Đức">Tiếng Đức</option>
+                    <option value="Tiếng Ý">Tiếng Ý</option>
+                    <option value="Tiếng Bồ Đào Nha">Tiếng Bồ Đào Nha</option>
+                    <option value="Tiếng Ba Lan">Tiếng Ba Lan</option>
+                    <option value="Tiếng Thổ Nhĩ Kỳ">Tiếng Thổ Nhĩ Kỳ</option>
+                    <option value="Tiếng Nga">Tiếng Nga</option>
+                    <option value="Tiếng Hà Lan">Tiếng Hà Lan</option>
+                    <option value="Tiếng Séc">Tiếng Séc</option>
+                    <option value="Tiếng Ả Rập">Tiếng Ả Rập</option>
+                    <option value="Tiếng Trung (giản thể)">Tiếng Trung (giản thể)</option>
+                    <option value="Tiếng Nhật">Tiếng Nhật</option>
+                    <option value="Tiếng Hungary">Tiếng Hungary</option>
+                    <option value="Tiếng Hàn">Tiếng Hàn</option>
+                    <option value="Tiếng Hindi">Tiếng Hindi</option>
+                </select>
+            </div>
+
+            <!-- Display sample audio files for testing -->
+            <h2 class="mt-4">Sample Audio Files:</h2>
+
+            <!-- Button to toggle sample audio list -->
+            <button class="btn btn-secondary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#sampleAudioList" aria-expanded="false" aria-controls="sampleAudioList">
+                Listen to Sample Audio
+            </button>
+
+            <!-- Collapsible sample audio list -->
+            <div class="collapse" id="sampleAudioList">
+                <div class="list-group">
+                    {% for sample in samples %}
+                    <div class="list-group-item">
+                        <p>{{ sample }}</p>
+                        <audio controls>
+                            <source src="{{ url_for('static', filename='samples/' ~ sample) }}" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="sample_audio" class="form-label">Select Sample Audio:</label>
+                <select name="sample_audio" class="form-select" onchange="handleSampleSelection(event)">
+                    <option value="">None</option>
+                    {% for sample in samples %}
+                    <option value="{{ sample }}">{{ sample }}</option>
+                    {% endfor %}
+                    <option value="own_voice">Your Own Voice</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="audio_file" class="form-label">Upload a voice to clone (WAV):</label>
+                <input type="file" name="audio_file" id="audio_file" accept="audio/wav" class="form-control" style="display: none;">
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="normalize_text" class="form-check-input">
+                <label for="normalize_text" class="form-check-label">Normalize Text</label>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Submit Button -->
+                <button id="submitButton" type="submit" class="btn btn-primary">Generate Speech</button>
+                
+                <!-- Spinner for loading -->
+                <div id="spinner" class="spinner-border text-primary" style="display: none;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </form>
+
+        <!-- Audio player will be shown once the file is generated -->
+        <h2 class="mt-4">Generated Speech:</h2>
+        <audio id="audioPlayer" controls style="display: none;" class="w-100">
+            Your browser does not support the audio element.
+        </audio>
+
+   
+    </div>
+
+    <!-- Bootstrap JS (optional, for advanced features like tooltips and modals) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script>
+        // Handle sample selection
+        function handleSampleSelection(event) {
+            const fileInput = document.getElementById('audio_file');
+            if (event.target.value === 'own_voice') {
+                fileInput.style.display = 'block';
+            } else {
+                fileInput.style.display = 'none';
+            }
+        }
+
+        // Update text length counter and disable button if text length exceeds 1000 characters
+        function updateTextLength() {
+            const textarea = document.getElementById('input_text');
+            const textLength = textarea.value.length;
+            const counter = document.getElementById('textLengthCounter');
+            const submitButton = document.getElementById('submitButton');
+
+            counter.innerText = `${textLength}/1000`;
+
+            if (textLength > 1000) {
+                submitButton.disabled = true;
+                counter.style.color = 'red';
+            } else {
+                submitButton.disabled = false;
+                counter.style.color = 'black';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.getElementById('input_text');
+            textarea.addEventListener('input', updateTextLength);
+            updateTextLength(); // Initialize counter on page load
+        });
+    </script>
+</body>
+</html>

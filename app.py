@@ -15,9 +15,70 @@ from vinorm import TTSnorm
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
 
-
-# Initialize Flask app
+### Initialize Flask app ####
 app = Flask(__name__)
+
+### Begin Firebase configuration and routes ###
+from flask import Flask, render_template, redirect, url_for, session, request
+import firebase_admin
+from firebase_admin import credentials, auth
+from google.cloud import firestore
+from dotenv import load_dotenv
+import os
+
+# Initialize Firebase Admin SDK
+cred_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS', 'serviceAccountKey.json')
+cred = credentials.Certificate(cred_path)
+firebase_admin.initialize_app(cred)
+
+# Initialize Firestore
+db = firestore.Client()
+
+# @app.route('/')
+# def index():
+#     user = session.get('user')
+#     return render_template('index.html', user=user)
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/login/callback', methods=['POST'])
+def login_callback():
+    id_token = request.form['id_token']
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        user_info = {
+            'uid': decoded_token['uid'],
+            'name': decoded_token.get('name'),
+            'email': decoded_token.get('email'),
+            'picture': decoded_token.get('picture')
+        }
+        session['user'] = user_info
+
+        # Store user information in Firestore
+        user_ref = db.collection('users').document(user_info['uid'])
+        user_ref.set(user_info, merge=True)
+
+        return redirect(url_for('protected'))
+    except Exception as e:
+        print(e)
+        return 'Authentication failed', 401
+
+@app.route('/protected')
+def protected():
+    user = session.get('user')
+    if not user:
+        return redirect(url_for('index'))
+    return render_template('protected.html', user=user)
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('index'))
+
+### End of Firebase configuration and routes ###
+
 
 # Directories for uploads and output
 UPLOAD_FOLDER = 'uploads'
@@ -210,8 +271,14 @@ def run_tts(XTTS_MODEL, lang, tts_text, speaker_audio_file,
 # Flask routes
 @app.route('/')
 def index():
+    user = session.get('user')
     samples = os.listdir(app.config['SAMPLES_FOLDER'])
-    return render_template('index.html', samples=samples)
+    return render_template('index.html', samples=samples, user=user)
+
+# @app.route('/')
+# def index():
+#     user = session.get('user')
+#     return render_template('index.html', user=user)
 
 @app.route('/process', methods=['POST'])
 def process():
@@ -252,6 +319,10 @@ def process():
 @app.route('/download/<filename>')
 def download_file(filename):
     return send_from_directory(app.config['OUTPUT_FOLDER'], filename)
+
+
+# all routes for authentication
+
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)

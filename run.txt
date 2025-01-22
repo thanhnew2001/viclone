@@ -1,0 +1,1 @@
+ export GOOGLE_APPLICATION_CREDENTIALS="key/inifiniti-5c931-firebase-adminsdk-fbsvc-6b397f960a.json"
