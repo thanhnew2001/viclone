@@ -55,14 +55,18 @@
 <body>
     {% include 'header.html' %}
     <main class="container">
+        <h1 class="text-center mb-4">Text-to-Speech with Cloning Everyone's voices</h1>
+
+        <button onclick="onConvert()" class="btn btn-primary">Try now!!!</button>
+
           <!-- Display sample audio files for testing -->
-          <h2 class="mt-4">Sample Audio Files:</h2>
+          <h4 class="mt-4">Sample Audio Files:</h4>
 
           <!-- Collapsible sample audio list -->
           <div>
               <div class="list-group">
                   {% for sample in samples %}
-                  <div class="list-group-item">
+                  <div class="list-group-item" style="float: left; width: 50%;">
                       <p>{{ sample }}</p>
                       <audio controls>
                           <source src="{{ url_for('static', filename='samples/' ~ sample) }}" type="audio/wav">
@@ -73,7 +77,6 @@
               </div>
           </div>
 
-        <button onclick="onConvert()" class="btn">Get started now!!!</button>
     </main>
 </body>
 </html>
