@@ -223,7 +223,7 @@ def process():
 
     # Handle sample selection
     sample_audio = request.form.get('sample_audio')
-    if sample_audio:
+    if sample_audio and sample_audio != 'own_voice':
         file_path = os.path.join(app.config['SAMPLES_FOLDER'], sample_audio)
     else:
         # Handle file upload
