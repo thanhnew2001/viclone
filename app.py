@@ -17,13 +17,14 @@ from TTS.tts.models.xtts import Xtts
 
 ### Initialize Flask app ####
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'your_secret_key'
+
 
 ### Begin Firebase configuration and routes ###
 from flask import Flask, render_template, redirect, url_for, session, request
 import firebase_admin
 from firebase_admin import credentials, auth
 from google.cloud import firestore
-from dotenv import load_dotenv
 import os
 
 # Initialize Firebase Admin SDK
