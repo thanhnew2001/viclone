@@ -58,13 +58,8 @@
           <!-- Display sample audio files for testing -->
           <h2 class="mt-4">Sample Audio Files:</h2>
 
-          <!-- Button to toggle sample audio list -->
-          <button class="btn btn-secondary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#sampleAudioList" aria-expanded="false" aria-controls="sampleAudioList">
-              Listen to Sample Audio
-          </button>
-
           <!-- Collapsible sample audio list -->
-          <div class="collapse" id="sampleAudioList">
+          <div>
               <div class="list-group">
                   {% for sample in samples %}
                   <div class="list-group-item">
@@ -78,7 +73,7 @@
               </div>
           </div>
 
-        <button onclick="onConvert()">Get started now!!!</button>
+        <button onclick="onConvert()" class="btn">Get started now!!!</button>
     </main>
 </body>
 </html>

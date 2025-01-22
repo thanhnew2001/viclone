@@ -69,9 +69,11 @@ def login_callback():
 @app.route('/protected')
 def protected():
     user = session.get('user')
+    samples = os.listdir(app.config['SAMPLES_FOLDER'])
+
     if not user:
         return redirect(url_for('index'))
-    return render_template('protected.html', user=user)
+    return render_template('protected.html', user=user, samples=samples)
 
 @app.route('/logout')
 def logout():
