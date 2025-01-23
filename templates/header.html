@@ -1,13 +1,13 @@
 <header class="bg-light p-3 mb-4">
     <div class="container d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
-            <img src="{{ url_for('static', filename='images/voicelablogo.jpg') }}" alt="Voices Lab Logo" class="img-fluid mr-2" style="width: 50px; height: 50px;">
-            <h1 class="h3 mb-0">The Voices Lab</h1>
+            <img src="{{ url_for('static', filename='images/voicelablogo.jpg') }}" alt="Voices Lab Logo" class="img-fluid rounded-circle mr-2" style="width: 50px; height: 50px; object-fit: cover;">
+            <h1 class="h3 mb-0">Voices Lab</h1>
         </div>
         {% if user %}
             <div>
                 <p class="mb-1">Hello, {{ user['name'] }}!</p>
-                <img src="{{ user['picture'] }}" alt="User Picture" class="img-thumbnail mb-2" style="width: 50px; height: 50px;">
+                <img src="{{ user['picture'] }}" alt="User Picture" class="img-thumbnail rounded-circle mb-2" style="width: 50px; height: 50px; object-fit: cover;">
                 <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
             </div>
         {% else %}
