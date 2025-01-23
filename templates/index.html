@@ -75,8 +75,10 @@
         function onConvert() {
             firebase.auth().onAuthStateChanged(function(user) {
                 if (user) {
-                    document.location.href = '/protected';
+                    console.log('User is authenticated, redirecting...');
+                    window.location = '/protected';
                 } else {
+                    console.log('User is not authenticated, prompting sign in...');
                     alert('Please sign in first.');
                     onSignIn();
                 }
