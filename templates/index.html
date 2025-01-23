@@ -46,7 +46,14 @@
             <div class="container">
                 <h1>Welcome to The Voices Lab</h1>
                 <p>Experience the power of AI-driven text-to-speech with voice cloning technology.</p>
+                {% if user %}
                 <button onclick="onConvert()" class="btn btn-primary btn-lg mt-4">Try now</button>
+                {% else %}  
+                <button onclick="onSignIn()" class="btn">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAzFBMVEVHcEz////////+/v77+/vx8fL9/f309fX+/v739/f////09PXOz8/5+vr8/P3////////29vf///////84qlf8wAdGiPX8/PzsUUTqQjQsqFLrSj3S3/w6g/TqPCs0gPQgpUf85+bv9P+63sL62Nb+8ef4ycbw+PJkunkeePP81HXwgGv0jhzc5/3o9efX7N5Fr19Uj/WQy562zPr2trL94KDzoJrzoJv80Gjyl5H94qgyh9v7xzihsSp+wYV1sE5ZtXBmmvUynoWKrvzKDGT6AAAAE3RSTlMAW+TTeBLcHLMt1WsKzfUznkBIxSDAuAAAAUZJREFUKJFtktligkAMRUFZxKVuDMOAggpu1apVu+/t//9TkxBU1PsySQ4hlyGadpTd0fWOrV2R3eqyWhe80j1RpYCc7pmcI2tyaZimQw6bOTMplU9hpKIofJSUmgwtTCYq9EFhqKIJ5lbGdGIRAGhUQLNX6wRLOA2Y8vdpuvfVOJtaOjhdhL56yYrjU8cGFsRSLc4/x+DPfxBiSZN6LMlXUYXzVghBT8/7pPkdxFX28yzEO8HYI8U9dlQudMZx3AeInWWe+SrExxrhCLTre3E+M3P7FXznLn887z53a2PwGbjBLLvUP2jcYUC/FYdOA9d1g22SbN1fbizT9bUxXA+QguB4G2GlfbIFqw1i0GCzKmzDDQ1LZgPQLKHk5rAJpmSj0ykH0jxArW4V79yqF1bMkEckjYvFrTWIy0btApFsx7m68Ff1D4OdMHbngtKsAAAAAElFTkSuQmCC" alt="" class="mr-2">
+                    Sign in with Google
+                </button>
+                {% endif %}
             </div>
         </section>
 
@@ -73,28 +80,25 @@
             </div>
         </section>
 
-        <!-- Sample Audio Files Section -->
-        <section class="container mt-5">
-            <h4 class="text-center">Voice Gallery</h4>
-            <div class="text-center">
-                <button class="btn btn-secondary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#sampleAudioList" aria-expanded="false" aria-controls="sampleAudioList">
-                    Listen to Sample Audios
-                </button>
-            </div>
-            <div class="collapse" id="sampleAudioList">
-                <div class="list-group">
-                    {% for sample in samples %}
-                    <div class="list-group-item">
-                        <p>{{ sample }}</p>
-                        <audio controls>
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for sample in samples %}
+            <div class="col">
+                <!-- Card for each sample -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Sample: {{ sample }}</h5>
+                        <audio controls class="w-100">
                             <source src="{{ url_for('static', filename='samples/' ~ sample) }}" type="audio/wav">
                             Your browser does not support the audio element.
                         </audio>
                     </div>
-                    {% endfor %}
                 </div>
             </div>
-        </section>
+            {% endfor %}
+        </div>
+    </div>
+
     </main>
 
     {% include 'footer.html' %}
