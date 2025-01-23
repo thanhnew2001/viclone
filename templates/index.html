@@ -135,20 +135,21 @@
 
         function onConvert() {
             firebase.auth().onAuthStateChanged(function(user) {
-                if (user) {
-                    user.getIdToken().then(function(idToken) {
+                console.log('Checking user authentication...');
+            
+                user.getIdToken().then(function(idToken) {
                         console.log('User is authenticated, redirecting...');
                         window.location = '/protected';
                     }).catch(function(error) {
                         console.log('Error getting ID token:', error);
                         alert('Authentication error. Please sign in again.');
                         onSignIn();
+                        return 
                     });
-                } else {
-                    console.log('User is not authenticated, prompting sign in...');
-                    alert('Please sign in first.');
-                    onSignIn();
-                }
+                
+
+                onSignIn();
+                
             });
         }
     </script>
