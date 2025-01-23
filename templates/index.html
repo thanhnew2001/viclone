@@ -136,11 +136,11 @@
         function onConvert() {
             firebase.auth().onAuthStateChanged(function(user) {
                 console.log(user);
-                // if (user) {
-                //     window.location.href = '/protected';
-                // } else {
-                //     onSignIn();
-                // }
+                if (user) {
+                    window.location.href = '/protected';
+                } else {
+                    onSignIn();
+                }
                 
             });
         }

@@ -77,7 +77,7 @@ def protected():
 
 @app.route('/logout')
 def logout():
-    session.pop('user', None)
+    session.clear()
     return redirect(url_for('index'))
 
 ### End of Firebase configuration and routes ###
