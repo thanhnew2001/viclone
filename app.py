@@ -82,6 +82,14 @@ def logout():
 
 ### End of Firebase configuration and routes ###
 
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy_policy.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
 
 # Directories for uploads and output
 UPLOAD_FOLDER = 'uploads'

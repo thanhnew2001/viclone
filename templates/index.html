@@ -5,6 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .hero-section {
+            background: url('https://source.unsplash.com/random/1600x900') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+        }
+        .hero-section p {
+            font-size: 1.25rem;
+        }
+        .features-section {
+            padding: 50px 0;
+        }
+        .feature {
+            text-align: center;
+            padding: 20px;
+        }
+        .feature h3 {
+            margin-top: 20px;
+        }
+        .feature p {
+            color: #6c757d;
+        }
+    </style>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script>
@@ -54,33 +86,67 @@
 </head>
 <body>
     {% include 'header.html' %}
-    <main class="container">
-        <h1 class="text-center mb-4">Text-to-Speech with Cloning Everyone's voices</h1>
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <h1>Welcome to The Voices Lab</h1>
+                <p>Experience the power of AI-driven text-to-speech with voice cloning technology.</p>
+                <button onclick="onConvert()" class="btn btn-primary btn-lg mt-4">Try now</button>
+            </div>
+        </section>
 
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 feature">
+                        <img src="{{ url_for('static', filename='images/quality.jpg') }}"alt="Feature 1" class="img-fluid rounded-circle">
+                        <h3>High Quality</h3>
+                        <p>Generate high-quality speech with our advanced AI models.</p>
+                    </div>
+                    <div class="col-md-4 feature">
+                        <img src="{{ url_for('static', filename='images/voiceclone.jpg') }}" alt="Feature 2" class="img-fluid rounded-circle">
+                        <h3>Voice Cloning</h3>
+                        <p>Clone any voice with just a few seconds of audio.</p>
+                    </div>
+                    <div class="col-md-4 feature">
+                        <img src="{{ url_for('static', filename='images/easy.jpg') }}" alt="Feature 3" class="img-fluid rounded-circle">
+                        <h3>Easy to Use</h3>
+                        <p>Our user-friendly interface makes it easy to generate speech.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <!-- Center the Try now button -->
-        <div class="text-center">
-            <button onclick="onConvert()" class="btn btn-primary">Try now!!!</button>
-        </div>
-        
-          <!-- Display sample audio files for testing -->
-          <h4 class="mt-4">Sample Audio Files:</h4>
-
-          <!-- Collapsible sample audio list -->
-          <div>
-              <div class="list-group">
-                  {% for sample in samples %}
-                  <div class="list-group-item">
-                      <p>{{ sample }}</p>
-                      <audio controls>
-                          <source src="{{ url_for('static', filename='samples/' ~ sample) }}" type="audio/wav">
-                          Your browser does not support the audio element.
-                      </audio>
-                  </div>
-                  {% endfor %}
-              </div>
-          </div>
-
+        <!-- Sample Audio Files Section -->
+        <section class="container mt-5">
+            <h4 class="text-center">Voice Gallery</h4>
+            <div class="text-center">
+                <button class="btn btn-secondary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#sampleAudioList" aria-expanded="false" aria-controls="sampleAudioList">
+                    Listen to Sample Audios
+                </button>
+            </div>
+            <div class="collapse" id="sampleAudioList">
+                <div class="list-group">
+                    {% for sample in samples %}
+                    <div class="list-group-item">
+                        <p>{{ sample }}</p>
+                        <audio controls>
+                            <source src="{{ url_for('static', filename='samples/' ~ sample) }}" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
     </main>
+
+    {% include 'footer.html' %}
+    
+    <!-- Bootstrap JS (optional, for advanced features like tooltips and modals) -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

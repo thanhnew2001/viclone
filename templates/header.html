@@ -1,6 +1,9 @@
 <header class="bg-light p-3 mb-4">
     <div class="container d-flex justify-content-between align-items-center">
-        <h1 class="h3 mb-0">Elevate Labs - Voise Cloning App </h1>
+        <div class="d-flex align-items-center">
+            <img src="{{ url_for('static', filename='images/voicelablogo.jpg') }}" alt="Voices Lab Logo" class="img-fluid mr-2" style="width: 50px; height: 50px;">
+            <h1 class="h3 mb-0">The Voices Lab</h1>
+        </div>
         {% if user %}
             <div>
                 <p class="mb-1">Hello, {{ user['name'] }}!</p>
