@@ -135,20 +135,12 @@
 
         function onConvert() {
             firebase.auth().onAuthStateChanged(function(user) {
-                console.log('Checking user authentication...');
-            
-                user.getIdToken().then(function(idToken) {
-                        console.log('User is authenticated, redirecting...');
-                        window.location = '/protected';
-                    }).catch(function(error) {
-                        console.log('Error getting ID token:', error);
-                        alert('Authentication error. Please sign in again.');
-                        onSignIn();
-                        return 
-                    });
-                
-
-                onSignIn();
+                console.log(user);
+                // if (user) {
+                //     window.location.href = '/protected';
+                // } else {
+                //     onSignIn();
+                // }
                 
             });
         }
