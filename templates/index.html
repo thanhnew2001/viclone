@@ -37,57 +37,6 @@
             color: #6c757d;
         }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
-    <script>
-        // Your Firebase configuration
-        var firebaseConfig = {
-            apiKey: "AIzaSyDadA7LdSA38xhfK24GCo1lswGIK3xx3_k",
-            authDomain: "inifiniti-5c931.firebaseapp.com",
-            projectId: "inifiniti-5c931",
-            storageBucket: "inifiniti-5c931.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
-        function onSignIn() {
-            var provider = new firebase.auth.GoogleAuthProvider();
-            firebase.auth().signInWithPopup(provider).then(function(result) {
-                result.user.getIdToken().then(function(idToken) {
-                    var form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '/login/callback';
-                    var input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'id_token';
-                    input.value = idToken;
-                    form.appendChild(input);
-                    document.body.appendChild(form);
-                    form.submit();
-                });
-            }).catch(function(error) {
-                console.log(error);
-            });
-        }
-
-        function onConvert() {
-            firebase.auth().onAuthStateChanged(function(user) {
-                if (user) {
-                    console.log('User is authenticated, redirecting...');
-                    window.location = '/protected';
-                } else {
-                    console.log('User is not authenticated, prompting sign in...');
-                    alert('Please sign in first.');
-                    onSignIn();
-                }
-            });
-        }
-    </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
     {% include 'header.html' %}
@@ -149,9 +98,56 @@
     </main>
 
     {% include 'footer.html' %}
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script>
+        // Your Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyDadA7LdSA38xhfK24GCo1lswGIK3xx3_k",
+            authDomain: "inifiniti-5c931.firebaseapp.com",
+            projectId: "inifiniti-5c931",
+            storageBucket: "inifiniti-5c931.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
 
-    <!-- Bootstrap JS (optional, for advanced features like tooltips and modals) -->
+        function onSignIn() {
+            var provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider).then(function(result) {
+                result.user.getIdToken().then(function(idToken) {
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/login/callback';
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'id_token';
+                    input.value = idToken;
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                });
+            }).catch(function(error) {
+                console.log(error);
+            });
+        }
+
+        function onConvert() {
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    console.log('User is authenticated, redirecting...');
+                    window.location = '/protected';
+                } else {
+                    console.log('User is not authenticated, prompting sign in...');
+                    alert('Please sign in first.');
+                    onSignIn();
+                }
+            });
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
