@@ -2,7 +2,7 @@ import re
 
 def split_text_into_sentences(text):
     text = text.strip()
-    text = text.replace('\n', ' ')
+    text = re.sub(r'\n+', '', text)  # Completely remove all newlines
     text = text.replace('\r', ' ')
     text = text.replace('-', ' ')
     text = re.sub(r'\.\.+', '.', text)
