@@ -298,8 +298,8 @@ def process():
     
     input_text = request.form['input_text']
     input_text = input_text.strip()
-    input_text = sentence_length(input_text)
-    
+    input_text = input_text
+
     language = request.form['language']
     normalize_text = 'normalize_text' in request.form
 

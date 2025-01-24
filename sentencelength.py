@@ -32,7 +32,7 @@ def join_short_sentences(sentences, min_words=10):
     
     return result
 
-def split_long_sentence(sentence, max_words=20):
+def split_long_sentence(sentence, max_words=30):
     # Split the sentence into words
     words = sentence.split()
     
@@ -77,20 +77,12 @@ def sentence_length(text, min_words=10, max_words=20):
 
 # Example usage:
 text = """
-Giáo sư giận dữ:
-
-- Không thể như vậy được! Hãy nghĩ như một luật sư xem nào.
-
-Anh chàng luật sư tương lai hắng giọng:
-
-- Vậy thì, em sẽ nói với người đó: Tôi, sau đây, trao và chuyển quyền sở hữu toàn bộ và duy nhất của tôi với tất cả các tài sản, quyền lợi, quyền hạn, nghĩa vụ, lợi ích của mình trong trái cam này cho ngài, cùng với toàn bộ cuống, vỏ, nước, cùi và hạt của nó, với tất cả các quyền hợp pháp cắn, cắt, ướp lạnh hoặc ăn nó, quyền được trao nó cho người khác với tất cả cuống vỏ, nước, cùi và hạt của nó.
-
-Tất cả những gì được đề cập trước và sau đây hoặc bất kỳ hành vi, hoặc những hành vi, phương tiện thuộc bất kỳ bản chất hoặc loại nào không tương hợp với tuyên bố này, trong bất kỳ hoàn cảnh nào, đều không có giá trị pháp ly...
+Trung ương yêu cầu nhanh chóng triển khai đề án tiếp tục sắp xếp, không tổ chức công an cấp huyện.
 """
 
 # Process the text
-#processed_sentences = process_text(text)
+processed_sentences = sentence_length(text)
 
 
 # Print the merged text
-#print(processed_sentences)
+print(processed_sentences)
