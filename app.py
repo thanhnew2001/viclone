@@ -14,6 +14,7 @@ from unidecode import unidecode
 from vinorm import TTSnorm
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
+from sentencelength import sentence_length
 
 ### Initialize Flask app ####
 app = Flask(__name__)
@@ -296,6 +297,9 @@ def process():
     global vixtts_model  # Declare the variable as global so we can modify it
     
     input_text = request.form['input_text']
+    input_text = input_text.strip()
+    input_text = sentence_length(input_text)
+    
     language = request.form['language']
     normalize_text = 'normalize_text' in request.form
 
