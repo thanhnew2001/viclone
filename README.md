@@ -14,3 +14,11 @@ $python3 downloadmodel.py
 
 # Run a test tts:
 $python3 loadmodelandtest.py
+
+
+# Install key
+ export GOOGLE_APPLICATION_CREDENTIALS="key/inifiniti-5c931-firebase-adminsdk-fbsvc-6b397f960a.json"
+
+# Start gunicorn (multi threds)
+ nohup gunicorn --bind 0.0.0.0:5000 --workers 2 --threads 2 --timeout 120 app:app &
+ 
